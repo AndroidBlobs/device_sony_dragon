@@ -1,0 +1,121 @@
+#
+# from device/somc/dragon/system.prop
+#
+#
+# system.prop for generic sdk
+#
+
+rild.libpath=mtk-ril.so
+rild.libargs=-d /dev/ttyC0
+
+
+# MTK, Infinity, 20090720 {
+wifi.interface=wlan0
+# MTK, Infinity, 20090720 }
+
+# MTK, mtk03034, 20101210 {
+ro.mediatek.wlan.wsc=1
+# MTK, mtk03034 20101210}
+# MTK, mtk03034, 20110318 {
+ro.mediatek.wlan.p2p=1
+# MTK, mtk03034 20110318}
+
+# MTK, mtk03034, 20101213 {
+mediatek.wlan.ctia=0
+# MTK, mtk03034 20101213}
+
+
+#
+wifi.tethering.interface=ap0
+#
+
+ro.opengles.version=196610
+#ro.kernel.qemu=1
+#ro.kernel.qemu.gles=0
+
+wifi.direct.interface=p2p0
+#dalvik.vm.heapgrowthlimit=256m
+#dalvik.vm.heapsize=512m
+
+# USB MTP WHQL
+ro.sys.usb.mtp.whql.enable=0
+
+# Power off opt in IPO
+sys.ipo.pwrdncap=2
+
+ro.sys.usb.storage.type=mtp
+
+# USB BICR function
+ro.sys.usb.bicr=no
+
+# USB Charge only function
+ro.sys.usb.charging.only=yes
+
+# audio
+ro.camera.sound.forced=0
+ro.audio.silent=0
+# add by LY for JIMODM18-77
+ro.config.media_vol_default=8
+
+ro.zygote.preload.enable=0
+
+# temporary enables NAV bar (soft keys)
+qemu.hw.mainkeys=0
+
+ro.kernel.zio=38,108,105,16
+#ro.kernel.qemu=1
+#ro.kernel.qemu.gles=0
+#ro.boot.selinux=disable
+
+# Disable dirty region for Mali
+#debug.hwui.render_dirty_regions=false
+
+ro.sf.lcd_density=480
+
+# performance
+ro.mtk_perf_simple_start_win=1
+ro.mtk_perf_fast_start_win=1
+ro.mtk_perf_response_time=1
+
+# SD Encryption supported
+ro.sdcrypt.supported=true
+
+# disable ipo for development
+sys.ipo.disable=1
+
+# camera aux packagelist
+vendor.camera.aux.packagelist=android.camera.cts,com.yha.factory,com.yha.runtime,com.mediatek.emcamera
+
+# add by zhangpanpan for ZAL1680G-459
+persist.sys.disable_rescue=1
+
+# add by xlq for ZAL1680G-590
+persist.zawgyi.selected=false
+
+# add by xlq for ZAL1680G-4248
+ro.semc.content.number=PA4
+
+# Setup Wizard
+ro.com.android.prov_mobiledata=false
+
+# add by wangtao
+persist.service.battery.charge=0
+
+# Customization. Set property so preloaded APKs in folder
+# "/data/preloads/file_cache" will be deleted by the system
+# when data partition is full.
+persist.sys.preloads.file_cache_expired=1
+
+#default vibration
+persist.radio.telecom.vibrate=0
+
+###M:[JIMODM18-5907] Add prop for NFC FW and HW Version -start @{
+persist.nfc.cap.fwver=110119
+persist.nfc.cap.hwver=0x41
+###M:[JIMODM18-5907] Add prop for NFC FW and HW Version -end @}
+
+###M:[JIMODM18-6856] Set NFC default value -start @{
+ro.nfc.on.default=true
+###M:[JIMODM18-6856] Set NFC default value -end @}
+
+#

@@ -1,0 +1,124 @@
+# MTK project .rc configure
+
+import init.mt6765.usb.rc
+
+on init
+    mkdir /mnt/media_rw/usbotg 0700 media_rw media_rw
+    mkdir /storage/usbotg 0700 root root
+
+on post-fs-data
+
+#LED
+    chmod 0646 /sys/class/leds/red/brightness
+    chmod 0646 /sys/class/leds/green/brightness
+    chmod 0646 /sys/class/leds/blue/brightness
+
+#Sensor
+    chmod 0646 /sys/bus/platform/drivers/gsensor/test_cali
+
+#Camera
+    chmod 0660 /dev/MAINAF
+    chown system camera /dev/MAINAF
+
+    chmod 0660 /dev/MAINAF2
+    chown system camera /dev/MAINAF2
+
+    chmod 0660 /dev/SUBAF
+    chown system camera /dev/SUBAF
+
+    chmod 0660 /dev/GAF001AF
+    chown system camera /dev/GAF001AF
+
+    chmod 0660 /dev/DW9714AF
+    chown system camera /dev/DW9714AF
+
+	chmod 0660 /dev/ZC524AF
+    chown system camera /dev/ZC524AF
+
+    chmod 0660 /dev/LC898212AF
+    chown system camera /dev/LC898212AF
+
+    chmod 0660 /dev/BU64745GWZAF
+    chown system camera /dev/BU64745GWZAF
+
+#SMB
+    chown system system /proc/smb/ScreenComm
+    chmod 0660 /proc/smb/ScreenComm
+
+    chmod 0660 /dev/spm
+    chown system system /dev/spm
+
+#Write flag
+    mkdir /vendor/persist/flag 0777 root root
+
+#Bright
+    chmod 0646 /sys/devices/platform/leds-mt65xx/leds/lcd-backlight/brightness
+
+#NFC
+    chown nfc nfc /dev/pn553
+    chmod 0660 /dev/pn553
+    mkdir /data/vendor/nfc 0770 nfc system
+
+on init
+    # Refer to http://source.android.com/devices/tech/storage/index.html
+    # It said, "Starting in Android 4.4, multiple external storage devices are surfaced to developers through
+    #           Context.getExternalFilesDirs(), Context.getExternalCacheDirs(), and Context.getObbDirs().
+    #           External storage devices surfaced through these APIs must be a semi-permanent part of the device (such as an SD card slot in a battery compartment).
+    #           Developers expect data stored in these locations to be available over long periods of time."
+    # Therefore, if the target doesn't support sd hot-plugging (Ex: the SD card slot in a battery compartment), we need to export SECONDARY_STORAGE in 'boot' section
+    #
+    # export SECONDARY_STORAGE /storage/sdcard1
+
+    # SONY: Enable wakeup irq module
+    write /sys/devices/platform/wakeup_debug.0/enable 1
+
+    # SONY: Memory Tuning
+    write /proc/sys/vm/swappiness 100
+    write /proc/sys/vm/watermark_scale_factor 100
+
+
+service fuse_usbotg /system/bin/sdcard -u 1023 -g 1023 -w 1023 -d /mnt/media_rw/usbotg /storage/usbotg
+    class late_start
+    disabled
+
+service spm_script /vendor/bin/spm_loader
+    user system
+    group system
+    class core
+    oneshot
+
+# start remosaic_daemon
+on property:sys.boot_completed=1
+    start remosaic_daemon
+
+service remosaic_daemon /vendor/bin/remosaic_daemon
+    class core
+    user system
+    group system
+    oneshot
+    disabled
+
+
+# Config file updater
+service ota-updater /vendor/bin/ota-config-updater.sh
+    class main
+    user system
+    group system
+    disabled
+    oneshot
+
+# set up symbolic links to proper configuration file
+service config-linker /vendor/bin/multi-cdf-symlinker.sh
+    class main
+    user system
+    group system
+    disabled
+    oneshot
+
+# Note! that there is a dependency towards taimport property
+# the property is set immediatly after execution of taimport.
+on property:init.taimport.ready=true
+    mkdir /data/customization 0755 system system
+    mkdir /data/customization/ota-config 0755 system system
+    restorecon /data/customization
+    start config-linker
